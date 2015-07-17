@@ -1,0 +1,180 @@
+<!doctype html>
+
+
+<html lang="en" ng-app="myApp">
+
+<head>
+<meta charset="utf-8" />
+
+<title>ToDo List</title>
+
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
+<style>
+
+
+body{
+    background-color: #99CCFF;
+    text-align: center;
+}
+
+.container-fluid {
+    margin : 10px auto;
+    max-width: 800px;
+}
+
+.title{
+    width:100%;
+    color: white;
+    border: 1px solid blue;
+    background-color:#6BB2FF;
+}
+
+form{
+    padding: 20px;
+    border: 1px solid blue;
+}
+
+.type_item{
+    
+}
+
+
+li {
+    padding :10px;
+}
+
+.done{
+    text-decoration: line-through;
+    color: red;
+}
+
+.edit-in-place span {
+    cursor: pointer;
+}
+
+.edit-in-place input {
+    display: none;
+}
+
+.edit-in-place.active span {
+    display: none;
+}
+
+.edit-in-place.active input {
+    display: inline-block;
+}
+
+.edit-in-place:hover{
+    background-color:red;
+}
+
+</style>
+
+</head>
+  
+<body> 
+   
+     
+    <div class="container-fluid">
+        <div class="row" ng-controller="ToDoCtrl">
+            <div class="title" class="col-xs-12">
+            <h2>My ToDo List</h2>
+            </div>
+            
+            <div class="row">
+                <form name="myForm" ng-submit="addItem()">
+                    <input value="" type="text" class="type_item" class="col-xs-8" placeholder="item" ng-model="itemName" required />
+                    <button ng-disabled="myForm.$invalid">Add to list</button>
+                </form>
+            </div>
+
+            <ul>
+                <li ng-repeat="item in contacts">
+                    <input type="checkbox" ng-model="item.done" />
+                    <edit-in-place value="item.name" ng-class="{'done':item.done}" data-toggle="tooltip" title="Click to edit!"></edit-in-place> 
+                    <button ng-click="remove(item)">Remove</button>   
+                </li>
+            </ul>
+
+        </div>
+    </div>
+        
+
+    <script src="angular.min.js"></script>
+    <script src="jquery-1.11.2.min.js"></script>
+    <script src="http://cdnjs.cloudflare.com/ajax/libs/jquery-easing/1.3/jquery.easing.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+    
+<script>
+     
+    var app = angular.module( 'myApp', [] );
+
+        app.directive( 'editInPlace', function() {
+        return {
+            restrict: 'E',
+            scope: { value: '=' },
+            template: '<span ng-click="edit()" ng-bind="value"></span><input ng-model="value"></input>',
+            link: function ( $scope, element, attrs ) {
+              
+                var inputElement = angular.element( element.children()[1] );
+                  
+                element.addClass( 'edit-in-place' );
+                  
+                $scope.editing = false;
+ 
+                $scope.edit = function () {
+                    $scope.editing = true;
+                        
+                    element.addClass( 'active' ); 
+                        
+                    inputElement[0].focus();
+                };
+                  
+                  
+                inputElement.prop( 'onblur', function() {
+                    $scope.editing = false;
+                    element.removeClass( 'active' );
+                });
+                
+            }  // end of Link
+        }; // end of return
+  
+    }); // end of edit in place
+
+
+    app.controller('ToDoCtrl', function ( $scope ) {
+
+        // existing list
+        $scope.contacts = [
+            {name:'item1'},
+            {name:'item2'},
+            
+        ];
+      
+        
+        // adding more items
+        $scope.addItem = function () {
+
+            $scope.contacts.push({
+                name: $scope.itemName, 'done' : false   
+            });
+            $scope.itemName = ''
+        }
+                    
+        // removing items            
+        $scope.remove = function(item) { 
+            var index = $scope.contacts.indexOf(item);
+            $scope.contacts.splice(index, 1); 
+                     
+        }
+ 
+    }); //end of controller
+
+
+</script>
+    
+
+
+</body>
+
+</html>
